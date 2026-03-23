@@ -89,9 +89,9 @@
 /vis/viewer/set/background white
 /vis/viewer/set/lineSegmentsPerCircle 50
 
-# 50 GeV muon, 5m impact parameter, entering along x-axis
+# 30 GeV muon, 5m impact parameter, entering along x-axis
 /gps/particle mu-
-/gps/energy 50 GeV
+/gps/energy 30 GeV
 /gps/position -8.5 0 5 m
 /gps/direction 1 0 0
 

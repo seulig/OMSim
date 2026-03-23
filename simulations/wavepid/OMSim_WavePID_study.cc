@@ -26,7 +26,7 @@ void addModuleOptions(OMSim* p_simulation)
     po::options_description wavepidOptions("WavePID study specific arguments");
 
     wavepidOptions.add_options()
-        ("impact_parameter,r", po::value<G4double>()->default_value(5.0),
+        ("impact_parameter,d", po::value<G4double>()->default_value(5.0),
             "Impact parameter: perpendicular distance from muon track to DOM center in meters")
         ("primary_energy,e", po::value<G4double>()->default_value(10.0),
             "Primary particle energy in GeV")
@@ -37,7 +37,7 @@ void addModuleOptions(OMSim* p_simulation)
         ("DOM_azimuth,a", po::value<G4double>()->default_value(0.0),
             "Azimuth angle of DOM orientation in degrees")
         ("macro,m", po::value<std::string>()->default_value(""),
-            "Path to macro file to execute (overrides -r, -e, -p if GPS commands used)");
+            "Path to macro file to execute (overrides -d, -e, -p if GPS commands used)");
 
     p_simulation->extendOptions(wavepidOptions);
 }

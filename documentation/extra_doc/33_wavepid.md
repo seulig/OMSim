@@ -7,7 +7,7 @@ In the folder `simulations/wavepid` you find the files pertinent to the WavePID 
 
 The WavePID simulation tracks the origin of each detected photon in IceCube optical modules. By classifying photons by their production mechanism and parent particle, this study enables analysis of photon arrival time distributions used in the WavePID particle identification method.
 
-The simulation supports all optical module types available in OMSim (DOM, pDOM, mDOM, LOM16, LOM18, D-Egg) and can be run in different environments (air, ice, SPICE).
+> **Note:** This study was applied and tested solely with `--detector_type 3` (standard DOM with normal quantum efficiency). Other module types are technically supported via the `--detector_type` flag but have not been used or validated in the scope of the WavePID study. The `--efficiency_cut` flag was not used — all photons arriving at the sensitive volume were recorded, as the QE-based die roll affects all photon origins equally and does not impact the origin-based timing distributions.
 
 ## Photon Origin Classification
 
@@ -32,12 +32,12 @@ The classification is performed in `OMSimSensitiveDetector::getPhotonInfo()` usi
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `-r, --impact_parameter` | Perpendicular distance from muon track to DOM center (m) | 5.0 |
+| `-d, --impact_parameter` | Perpendicular distance from muon track to DOM center (m) | 5.0 |
 | `-e, --primary_energy` | Primary particle energy (GeV) | 10.0 |
 | `-p, --primary_particle` | Primary particle type (`mu-`, `mu+`, `e-`, `e+`) | `mu-` |
 | `-z, --DOM_zenith` | DOM zenith orientation angle (degrees) | 0.0 |
 | `-a, --DOM_azimuth` | DOM azimuth orientation angle (degrees) | 0.0 |
-| `-m, --macro` | Path to Geant4 macro file (overrides `-r`, `-e`, `-p` if GPS commands are used) | none |
+| `-m, --macro` | Path to Geant4 macro file (overrides `-d`, `-e`, `-p` if GPS commands are used) | none |
 
 ### General OMSim Arguments
 
@@ -58,7 +58,7 @@ The classification is performed in `OMSimSensitiveDetector::getPhotonInfo()` usi
 
 The particle source can be configured in two ways:
 
-1. **Command-line arguments** (`-r`, `-e`, `-p`): The `OMSimPrimaryGeneratorAction` uses these to set up a GPS particle source with the correct geometry (impact parameter, Cherenkov cone alignment).
+1. **Command-line arguments** (`-d`, `-e`, `-p`): The `OMSimPrimaryGeneratorAction` uses these to set up a GPS particle source with the correct geometry (impact parameter, Cherenkov cone alignment).
 
 2. **Macro file** (`-m`): Provides full control over the GPS configuration via Geant4 macro commands. When a macro file is provided, its GPS commands override the command-line particle settings.
 
@@ -68,12 +68,7 @@ For simple configurations, command-line arguments are sufficient. For complex se
 
 ### Basic muon simulation with DOM
 ```bash
-./OMSim_WavePID_study -n 100 --detector_type 3 --environment 2 -r 5 -e 100 -p mu- -o output
-```
-
-### pDOM (HQE) in SPICE ice with harness
-```bash
-./OMSim_WavePID_study -n 100 --detector_type 7 --environment 2 --place_harness -r 5 -e 50 -p mu- -o output_pdom
+./OMSim_WavePID_study -n 10 --detector_type 3 --environment 2 -d 5 -e 30 -p mu- -o output
 ```
 
 ### Using a macro file
@@ -84,10 +79,10 @@ For simple configurations, command-line arguments are sufficient. For complex se
 Example macro file (`muon_config.mac`):
 ```
 /gps/particle mu-
-/gps/energy 100 GeV
+/gps/energy 30 GeV
 /gps/position -8.5 0 5 m
 /gps/direction 1 0 0
-/run/beamOn 100
+/run/beamOn 10
 ```
 
 ### Visualization
@@ -120,20 +115,21 @@ The simulation produces a ROOT file (`<output>_hits.root`) containing a TTree na
 | `globalPos_x/y/z` | Double_t | Hit position in global coordinates (mm) |
 | `deltaPos_x/y/z` | Double_t | Vector from generation to detection point (mm) |
 
-## Visualization Macros
+## Visualization Macro
 
-Two visualization macros are provided in `simulations/wavepid/`:
+A visualization macro is provided in `simulations/wavepid/`:
 
 | Macro | Description |
 |-------|-------------|
-| `vis_wavepid.mac` | Full trajectory display with particle coloring. Filters optical photons, neutrinos, and gammas. Includes default GPS: 50 GeV mu- at 5m impact parameter. |
-| `vis_minimal.mac` | Geometry-only view with no trajectory storage. Use for debugging geometry or when `vis_wavepid.mac` causes memory issues. |
+| `vis_wavepid.mac` | Full trajectory display with particle coloring. Filters optical photons, neutrinos, and gammas. Includes default GPS: 30 GeV mu- at 5m impact parameter. |
 
 ## Notes on `--efficiency_cut`
 
-When `--efficiency_cut` is enabled, each photon reaching the PMT photocathode is subjected to a QE-based detection probability roll. Photons failing this roll are discarded before being recorded. This means:
+The WavePID study did **not** use `--efficiency_cut`. All photons arriving at the sensitive volume (PMT photocathode) were recorded regardless of detection probability. This is because the QE-based die roll affects all photon origins equally and therefore does not impact the origin-based timing distributions that are the focus of this study.
 
-- **Without** `--efficiency_cut`: All photons reaching the photocathode are recorded. The detection probability is stored in the output and can be applied as a weight in post-processing.
+The flag can be enabled if desired:
+
+- **Without** `--efficiency_cut` (default, used in WavePID study): All photons reaching the photocathode are recorded. The detection probability is stored in the output and can be applied as a weight in post-processing.
 - **With** `--efficiency_cut`: Only "detected" photons are recorded (detection probability set to 1 in output). This reduces output file size but prevents re-weighting in analysis.
 
 ## Notes on Multithreading
