@@ -3,7 +3,7 @@
 #
 # Shows full trajectory display with particle coloring.
 # Filters out optical photons, neutrinos, and gammas to prevent memory exhaustion.
-# Includes a default GPS setup: 50 GeV mu-, 5m impact parameter.
+# Includes a default GPS setup: 30 GeV mu-, 5m impact parameter.
 
 # NOTE: /run/initialize is NOT called here - already done by the main executable
 /control/verbose 0

@@ -123,6 +123,10 @@ A visualization macro is provided in `simulations/wavepid/`:
 |-------|-------------|
 | `vis_wavepid.mac` | Full trajectory display with particle coloring. Filters optical photons, neutrinos, and gammas. Includes default GPS: 30 GeV mu- at 5m impact parameter. |
 
+## Notes on World Volume Size
+
+The world volume is a sphere of 30 m radius. For simplicity, no attempt was made to tune the world size precisely — the chosen radius fully contains the hadronic/electromagnetic cascade and a sufficiently large segment of the muon track for the target energy range of 1–100 GeV, without a noticeable performance impact.
+
 ## Notes on `--efficiency_cut`
 
 The WavePID study did **not** use `--efficiency_cut`. All photons arriving at the sensitive volume (PMT photocathode) were recorded regardless of detection probability. This is because the QE-based die roll affects all photon origins equally and therefore does not impact the origin-based timing distributions that are the focus of this study.
@@ -134,7 +138,7 @@ The flag can be enabled if desired:
 
 ## Notes on Multithreading
 
-The simulation supports multithreading via `--threads`. Each thread maintains its own hit data storage (using `G4ThreadLocal`), which is merged at the end of each run. A mutex protects the `TrackingAction` track-to-particle mapping.
+The simulation supports multithreading via `--threads`. Each thread maintains its own hit data storage (using `G4ThreadLocal`), which is merged at the end of each run. The `TrackingAction` track-to-particle maps are also `thread_local`, so no mutex is needed — each worker thread owns its maps independently.
 
 Note that running with different thread counts may produce different event-to-thread assignments, so exact hit-by-hit reproducibility across different thread counts is not guaranteed. However, statistical results should be consistent.
 

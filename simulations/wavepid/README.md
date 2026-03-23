@@ -4,6 +4,8 @@ Photon origin tracking study for IceCube optical modules using Geant4. For full 
 
 > **Note:** This study was applied and tested with `--detector_type 3` (standard DOM with normal QE). Other module types are technically supported via the `--detector_type` flag but have not been used in the scope of the WavePID study.
 
+> **World volume:** A 30 m radius sphere is used for simplicity — it fully contains the cascade and a sufficiently large muon track segment for the target energy range of 1–100 GeV.
+
 ## Quick Start
 
 ```bash
