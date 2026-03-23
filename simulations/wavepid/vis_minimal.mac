@@ -1,5 +1,7 @@
-# Ultra-minimal visualization - NO trajectories stored at all
-# Use this if vis_nophotons.mac still crashes
+# WavePID minimal visualization — geometry only, no trajectories
+# Usage: ./OMSim_WavePID_study --detector_type 3 --simple_PMT -v --macro vis_minimal.mac
+#
+# Use this for debugging geometry without trajectory overhead.
 
 /vis/open OGLSQt 800x800-0+0
 

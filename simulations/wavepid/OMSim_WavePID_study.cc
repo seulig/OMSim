@@ -3,7 +3,7 @@
  * @brief Main executable for WavePID photon origin tracking study.
  *
  * This simulation tracks photon origins (Cerenkov from Muon, Cerenkov from Electron,
- * Scintillation, etc.) for pDOM optical modules in IceCube ice.
+ * Scintillation, etc.) for IceCube optical modules.
  */
 #include "OMSim.hh"
 #include "OMSimWavePIDDetector.hh"
@@ -26,8 +26,6 @@ void addModuleOptions(OMSim* p_simulation)
     po::options_description wavepidOptions("WavePID study specific arguments");
 
     wavepidOptions.add_options()
-        ("dom_event_spacing,s", po::value<G4double>()->default_value(0),
-            "Distance between DOM origin and primary particle in meters (deprecated, use -r)")
         ("impact_parameter,r", po::value<G4double>()->default_value(5.0),
             "Impact parameter: perpendicular distance from muon track to DOM center in meters")
         ("primary_energy,e", po::value<G4double>()->default_value(10.0),
@@ -55,8 +53,6 @@ void runWavePIDSimulation()
     log_info("DOM orientation: zenith={} deg, azimuth={} deg",
              args.get<G4double>("DOM_zenith"),
              args.get<G4double>("DOM_azimuth"));
-    log_info("DOM-event spacing: {} m", args.get<G4double>("dom_event_spacing"));
-
     // Execute macro file if provided
     std::string macroFile = args.get<std::string>("macro");
     if (!macroFile.empty()) {
