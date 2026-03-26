@@ -63,8 +63,6 @@
 /vis/viewer/set/background white
 /vis/viewer/set/lineSegmentsPerCircle 50
 
-# 30 GeV muon, 5m impact parameter, entering along x-axis
-/gps/particle mu-
-/gps/energy 30 GeV
-/gps/position -8.5 0 5 m
-/gps/direction 1 0 0
+# Particle settings come from command-line args (-d, -e, -p).
+# If using --macro for GPS override, the GPS commands in the macro file
+# will configure the particle source instead.
