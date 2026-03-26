@@ -5,7 +5,7 @@ In the folder `simulations/wavepid` you find the files pertinent to the WavePID 
 
 ## Introduction
 
-The WavePID simulation tracks the origin of each detected photon in IceCube optical modules. By classifying photons by their production mechanism and parent particle, this study enables analysis of photon arrival time distributions used in the WavePID particle identification method.
+The WavePID simulation tracks the origin of each detected photon in IceCube optical modules. A primary particle (muon or other) is injected via Geant4's General Particle Source (GPS) at a configurable perpendicular distance (impact parameter) and energy. By classifying detected photons by their production mechanism and parent particle, this study enables analysis of photon arrival time distributions used in the WavePID particle identification method.
 
 > **Note:** This study was applied and tested solely with `--detector_type 3` (standard DOM with normal quantum efficiency). Other module types are technically supported via the `--detector_type` flag but have not been used or validated in the scope of the WavePID study. The `--efficiency_cut` flag was not used — all photons arriving at the sensitive volume were recorded, as the QE-based die roll affects all photon origins equally and does not impact the origin-based timing distributions.
 
@@ -87,8 +87,10 @@ Example macro file (`muon_config.mac`):
 
 ### Visualization
 ```bash
-./OMSim_WavePID_study --detector_type 3 --simple_PMT -v --macro vis_wavepid.mac
+./OMSim_WavePID_study --detector_type 3 --simple_PMT -v
 ```
+
+> **Note:** The visualization macro (`vis_nophotons.mac`) is loaded automatically when `-v` is passed. It is located at `../simulations/wavepid/vis_nophotons.mac` relative to the build directory, so `-v` must be run from a build directory one level below the repo root (e.g. `OMSim-fork/build/`). The `--macro` flag is for GPS configuration only (overriding the particle source), not for visualization.
 
 ## Output Format
 
@@ -121,7 +123,7 @@ A visualization macro is provided in `simulations/wavepid/`:
 
 | Macro | Description |
 |-------|-------------|
-| `vis_wavepid.mac` | Full trajectory display with particle coloring. Filters optical photons, neutrinos, and gammas. Includes default GPS: 30 GeV mu- at 5m impact parameter. |
+| `vis_nophotons.mac` | Full trajectory display with particle coloring. Filters optical photons, neutrinos, and gammas. Includes default GPS: 30 GeV mu- at 5m impact parameter. Loaded automatically when `-v` is passed. |
 
 ## Notes on World Volume Size
 
