@@ -2,7 +2,7 @@
 # Loaded automatically when running with -v (do not pass via --macro).
 # Shows trajectory display with particle coloring.
 # Filters out optical photons, neutrinos, and gammas to prevent memory exhaustion.
-# Includes a default GPS setup: 30 GeV mu-, 5m impact parameter.
+# Particle source is configured via command-line args (-d, -e, -p).
 
 # NOTE: /run/initialize is NOT called here - already done by the main executable
 /control/verbose 0
@@ -24,17 +24,17 @@
 /vis/viewer/set/hiddenMarker true
 /vis/viewer/set/lineSegmentsPerCircle 100
 
-# Draw smooth trajectories at end of event
+# Draw smooth trajectories at end of event; accumulate across events
 /vis/scene/add/trajectories smooth
+/vis/scene/endOfEventAction accumulate
 
-# Color trajectories by particle type; step points off by default to avoid point clouds
+# Color trajectories by particle type; step points on (optical photons filtered below)
 /vis/modeling/trajectories/create/drawByParticleID
-/vis/modeling/trajectories/drawByParticleID-0/default/setDrawStepPts false
+/vis/modeling/trajectories/drawByParticleID-0/default/setDrawStepPts true
 /vis/modeling/trajectories/drawByParticleID-0/set mu- blue
 /vis/modeling/trajectories/drawByParticleID-0/set mu+ blue
 /vis/modeling/trajectories/drawByParticleID-0/set e- red
 /vis/modeling/trajectories/drawByParticleID-0/set e+ red
-/vis/modeling/trajectories/drawByParticleID-0/set gamma cyan
 
 # Draw hits at end of event
 /vis/scene/add/hits

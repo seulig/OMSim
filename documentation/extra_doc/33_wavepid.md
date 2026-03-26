@@ -51,8 +51,9 @@ The classification is performed in `OMSimSensitiveDetector::getPhotonInfo()` usi
 | `--place_harness` | Place the OM harness geometry (if implemented for the module) | false |
 | `--efficiency_cut` | Apply QE-based detection efficiency cut (rolls a detection probability dice per photon) | false |
 | `--simple_PMT` | Use simplified PMT model without scan data | false |
-| `-t, --threads` | Number of worker threads | 1 |
-| `-v, --visual` | Enable visualization mode | false |
+| `--multithreading` | Enable multithreaded mode (G4MTRunManager); not compatible with `-v` | false |
+| `-t, --threads` | Number of worker threads (only active with `--multithreading`) | 1 |
+| `-v, --visual` | Enable visualization mode (requires single-threaded mode, i.e. no `--multithreading`) | false |
 
 ### Command-Line vs. Macro File Parameters
 
@@ -66,9 +67,14 @@ For simple configurations, command-line arguments are sufficient. For complex se
 
 ## Usage Examples
 
-### Basic muon simulation with DOM
+### Basic muon simulation with DOM (single-threaded)
 ```bash
 ./OMSim_WavePID_study -n 10 --detector_type 3 --environment 2 -d 5 -e 30 -p mu- -o output
+```
+
+### Large batch run with multithreading
+```bash
+./OMSim_WavePID_study -n 1000 --detector_type 3 --environment 2 -d 5 -e 30 -p mu- --multithreading --threads 8 -o output
 ```
 
 ### Using a macro file
@@ -140,7 +146,17 @@ The flag can be enabled if desired:
 
 ## Notes on Multithreading
 
-The simulation supports multithreading via `--threads`. Each thread maintains its own hit data storage (using `G4ThreadLocal`), which is merged at the end of each run. The `TrackingAction` track-to-particle maps are also `thread_local`, so no mutex is needed — each worker thread owns its maps independently.
+By default the simulation uses a single-threaded `G4RunManager`. This is intentional: the Geant4 Qt GUI (`-v`) crashes in `G4MTRunManager` mode because `G4WorkerRunManagerKernel::SetupShadowProcess()` fails for particles (such as alpha) that lack a process manager in worker threads during interactive sessions.
+
+To enable multithreading for large batch runs (where the GUI is not needed), pass `--multithreading`:
+
+```bash
+./OMSim_WavePID_study -n 1000 --detector_type 3 --environment 2 -d 5 -e 30 --multithreading --threads 8 -o output
+```
+
+Do **not** combine `--multithreading` with `-v` — the GUI will crash.
+
+When multithreading is active, each worker thread maintains its own hit data storage (using `G4ThreadLocal`), which is merged at the end of each run. The `TrackingAction` track-to-particle maps are also `thread_local`, so no mutex is needed — each worker thread owns its maps independently.
 
 Note that running with different thread counts may produce different event-to-thread assignments, so exact hit-by-hit reproducibility across different thread counts is not guaranteed. However, statistical results should be consistent.
 
