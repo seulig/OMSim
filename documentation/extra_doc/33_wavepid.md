@@ -73,7 +73,7 @@ For simple configurations, command-line arguments are sufficient. For complex se
 
 ### Using a macro file
 ```bash
-./OMSim_WavePID_study -o output --macro muon_config.mac
+./OMSim_WavePID_study -n 10 --detector_type 3 --environment 2 --macro muon_config.mac -o output
 ```
 
 Example macro file (`muon_config.mac`):
